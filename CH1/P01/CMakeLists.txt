@@ -3,4 +3,6 @@ project(P01)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(P01 main.cpp)
+add_executable(P01 main.cpp
+        sort.cpp
+        sort.h)

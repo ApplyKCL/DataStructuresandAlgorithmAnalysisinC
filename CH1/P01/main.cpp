@@ -1,27 +1,60 @@
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <fstream>
+#include <random>
+#include "sort.h"
+using namespace std;
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main()
 {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
-    // <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
-
-    for (int i = 1; i <= 5; i++)
+    string outfile = "data";
+    ofstream fout;
+    fout.open(outfile.c_str());
+    if (!fout)
     {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
-        // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
-        // breakpoint for you, but you can always add more by pressing
-        // <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+        cout << "Error opening " << outfile << endl;
+        return -1;
     }
+    int N = 1000;
+    fout << N << endl;
+    for (int i = 0; i < N; i++)
+    {
+        fout << rand() % 1000 << " ";
+    }
+    fout.close();
+    string infile = "data";
+    ifstream fin;
+    fin.open(infile.c_str());
+    if (!fin)
+    {
+        cout << "Error opening " << infile << endl;
+        return -1;
+    }
+    fin >> N;
+    int *arr = new int[N];
+    for (int i = 0; i < N; i++)
+    {
+        fin >> arr[i];
+    }
+    fin.close();
+    Sort s(N, arr);
+    s.initArray();
+    time_t startTime = time(NULL);
+    s.sortArray(N);
+    time_t endTime = time(NULL);
+    cout << "Time to sort " << N << " elements: " << endTime - startTime << " seconds" << endl;
+    //s.printArray();
+    s.initKArray();
+    time_t startTime2 = time(NULL);
+    s.sortKArray(N/2);
 
-    return 0;
+
+    //s.printKArray();
+    s.popKArray();
+    time_t endTime2 = time(NULL);
+    cout << "Time to sort " << N/2 << " elements: " << endTime2 - startTime2 << " seconds" << endl;
+    //s.printKArray();
+
+    delete[] arr;
 }
-
-// TIP See CLion help at <a
-// href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>.
-//  Also, you can try interactive lessons for CLion by selecting
-//  'Help | Learn IDE Features' from the main menu.
