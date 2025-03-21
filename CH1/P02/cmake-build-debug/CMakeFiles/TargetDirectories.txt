@@ -1,0 +1,3 @@
+C:/code/DataStructuresandAlgorithmAnalysisinC/CH1/P02/cmake-build-debug/CMakeFiles/P02.dir
+C:/code/DataStructuresandAlgorithmAnalysisinC/CH1/P02/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/code/DataStructuresandAlgorithmAnalysisinC/CH1/P02/cmake-build-debug/CMakeFiles/rebuild_cache.dir
