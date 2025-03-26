@@ -3,7 +3,9 @@
 
 #include <iostream>
 #include <fstream>
-
+#include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 // TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -26,15 +28,24 @@ int main()
     unsigned int row = 0;
     unsigned int col = 0;
     string line = "";
-
-    while (dataFile>>line)
+    vector <string> data;
+    while (getline(dataFile, line))
     {
-        col = line.length();
+        line.erase(ranges::remove(line, ' ').begin(), line.end());
+        data.push_back(line);
         row++;
     }
     dataFile.close();
-    printf("Rows: %u\n", row);
-    printf("Cols: %u\n", col);
+
+    vector <string> dir;
+    while (getline(dirFile, line))
+    {
+        line.erase(ranges::remove(line, ' ').begin(), line.end());
+        dir.push_back(line);
+        col++;
+    }
+    dirFile.close();
+
 
 
     return 0;
