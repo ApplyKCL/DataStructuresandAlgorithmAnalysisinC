@@ -7,9 +7,112 @@
 #include <vector>
 #include <algorithm>
 
+#define HORIZONTAL 0
+#define VERTICAL 1
+#define OPPOSITEANG 2
+
 using namespace std;
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
+typedef struct {
+    int row;
+    int col;
+    int maxRow;
+    int maxCol;
+    int dir;
+} Position;
+
+int wordSearch(vector<string> data, vector<string> words);
+int findWord(vector<string> data, vector<string> words, Position p);
+int findWordH(vector<string> data, string word, Position p);
+int findWordV(vector<string> data, string word, Position p);
+int findWordA(vector<string> data, string word, Position p);
+
+int findWord(vector<string> data, vector<string> words, Position p)
+{
+
+    for (int i = 0; i < words.size(); i++)
+    {
+        if (data[p.row][p.col] == words[i][0])
+        {
+            if (findWordH(data, words[i], p) == 0)
+            {
+                return 0;
+            }
+            if (findWordV(data, words[i], p) == 0)
+            {
+                return 0;
+            }
+            if (findWordA(data, words[i], p) == 0)
+            {
+                return 0;
+            }
+        }else
+        {
+            p.col = p.col + 1;
+            if (p.col == p.maxCol)
+            {
+                p.col = 0;
+                p.row = p.row + 1;
+            }
+            if (p.row == p.maxRow)
+            {
+                return -1;
+            }
+        }
+        findWord(data, words, p);
+    }
+
+
+}
+
+int findWordH(vector<string> data, string word, Position p)
+{
+    if (word[0] == '\0')
+    {
+        return 0;
+    }
+    if (data[p.row][p.col] == word[0])
+    {
+        printf("%c", data[p.row][p.col]);
+        p.col = p.col + 1;
+        findWordH(data, &word[1], p);
+    }
+    return -1;
+}
+
+int findWordV(vector<string> data, string word, Position p)
+{
+    if (word[0] == '\0')
+    {
+        return 0;
+    }
+    if (data[p.row][p.col] == word[0])
+    {
+        printf("%c", data[p.row][p.col]);
+        p.row = p.row + 1;
+        findWordH(data, &word[1], p);
+    }
+    return -1;
+}
+
+int findWordA(vector<string> data, string word, Position p)
+{
+    if (word[0] == '\0')
+    {
+        return 0;
+    }
+    if (data[p.row][p.col] == word[0])
+    {
+        printf("%c", data[p.row][p.col]);
+        p.row = p.row + 1;
+        p.col = p.col + 1;
+        findWordH(data, &word[1], p);
+    }
+    return -1;
+
+}
+
+
 int main()
 {
     ifstream dataFile;
