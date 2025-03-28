@@ -7,111 +7,84 @@
 #include <vector>
 #include <algorithm>
 
-#define HORIZONTAL 0
-#define VERTICAL 1
-#define OPPOSITEANG 2
+#define POSITIVE_X 0
+#define POSITIVE_X_Y 1
+#define POSITIVE_Y 2
+#define NEGATIVE_X_Y 3
+#define NEGATIVE_X 4
+#define NEGATIVE_X_NEGATIVE_Y 5
+#define NEGATIVE_Y 6
+#define POSITIVE_X_NEGATIVE_Y 7
 
 using namespace std;
 
 typedef struct {
-    int row;
-    int col;
-    int maxRow;
-    int maxCol;
+    unsigned int row;
+    unsigned int col;
+    unsigned int maxRow;
+    unsigned int maxCol;
     int dir;
 } Position;
 
 int wordSearch(vector<string> data, vector<string> words);
 int findWord(vector<string> data, vector<string> words, Position p);
-int findWordH(vector<string> data, string word, Position p);
-int findWordV(vector<string> data, string word, Position p);
-int findWordA(vector<string> data, string word, Position p);
+int findWordRcu(vector<string> data, string word, Position p);
+
+const int dirX[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+const int dirY[8] = {0, 1, 1, 1, 0, -1, -1, -1};
 
 int findWord(vector<string> data, vector<string> words, Position p)
 {
-
-    for (int i = 0; i < words.size(); i++)
+    for (int i = 0; i < p.maxCol*p.maxRow; i++)
     {
-        if (data[p.row][p.col] == words[i][0])
+        p.col = i%p.maxCol;
+        p.row = i/p.maxCol;
+        for (auto & word : words)
         {
-            if (findWordH(data, words[i], p) == 0)
+            if (data[p.row][p.col] == word[0])
             {
-                return 0;
-            }
-            if (findWordV(data, words[i], p) == 0)
-            {
-                return 0;
-            }
-            if (findWordA(data, words[i], p) == 0)
-            {
-                return 0;
-            }
-        }else
-        {
-            p.col = p.col + 1;
-            if (p.col == p.maxCol)
-            {
-                p.col = 0;
-                p.row = p.row + 1;
-            }
-            if (p.row == p.maxRow)
-            {
-                return -1;
+                p.dir = POSITIVE_X;
+                findWordRcu(data, word, p) == 0 ? cout << "Word found: " << word << endl : cout << "";
+                p.dir = NEGATIVE_X;
+                findWordRcu(data, word, p) == 0 ? cout << "Word found: " << word << endl : cout << "";
+                p.dir = POSITIVE_Y;
+                findWordRcu(data, word, p) == 0 ? cout << "Word found: " << word << endl : cout << "";
+                p.dir = NEGATIVE_Y;
+                findWordRcu(data, word, p) == 0 ? cout << "Word found: " << word << endl : cout << "";
+                p.dir = POSITIVE_X_Y;
+                findWordRcu(data, word, p) == 0 ? cout << "Word found: " << word << endl : cout << "";
+                p.dir = NEGATIVE_X_Y;
+                findWordRcu(data, word, p) == 0 ? cout << "Word found: " << word << endl : cout << "";
+                p.dir = POSITIVE_X_NEGATIVE_Y;
+                findWordRcu(data, word, p) == 0 ? cout << "Word found: " << word << endl : cout << "";
+                p.dir = NEGATIVE_X_NEGATIVE_Y;
+                findWordRcu(data, word, p) == 0 ? cout << "Word found: " << word << endl : cout << "";
             }
         }
-        findWord(data, words, p);
     }
 
-
+    return -1;
 }
 
-int findWordH(vector<string> data, string word, Position p)
+int findWordRcu(vector<string> data, string word, Position p)
 {
     if (word[0] == '\0')
     {
         return 0;
     }
-    if (data[p.row][p.col] == word[0])
+    if (p.row >= p.maxRow || p.col >= p.maxCol)
     {
-        printf("%c", data[p.row][p.col]);
-        p.col = p.col + 1;
-        findWordH(data, &word[1], p);
-    }
-    return -1;
-}
-
-int findWordV(vector<string> data, string word, Position p)
-{
-    if (word[0] == '\0')
-    {
-        return 0;
+        return -1;
     }
     if (data[p.row][p.col] == word[0])
     {
-        printf("%c", data[p.row][p.col]);
-        p.row = p.row + 1;
-        findWordH(data, &word[1], p);
+        //cout << data[p.row][p.col]<< " Context: ("<<p.row<<","<<p.col<<") "<<"DIR: "<<p.dir<<endl;
+        p.col = p.col + dirX[p.dir];
+        p.row = p.row + dirY[p.dir];
+        return findWordRcu(data, word.substr(1), p);
     }
     return -1;
 }
-
-int findWordA(vector<string> data, string word, Position p)
-{
-    if (word[0] == '\0')
-    {
-        return 0;
-    }
-    if (data[p.row][p.col] == word[0])
-    {
-        printf("%c", data[p.row][p.col]);
-        p.row = p.row + 1;
-        p.col = p.col + 1;
-        findWordH(data, &word[1], p);
-    }
-    return -1;
-
-}
-
 
 int main()
 {
@@ -145,11 +118,16 @@ int main()
     {
         line.erase(ranges::remove(line, ' ').begin(), line.end());
         dir.push_back(line);
-        col++;
     }
     dirFile.close();
+    Position p;
+    p.row = 0;
+    p.col = 0;
+    p.maxRow = row;
+    p.maxCol = data[0].size();
+    p.dir = 0;
 
-
+    findWord(data, dir, p);
 
     return 0;
 }
